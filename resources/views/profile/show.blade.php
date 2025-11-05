@@ -26,7 +26,7 @@
                                     <p class="text-center" style="font-size: 10px;">{{auth()->user()->document_number}}</p>
                                     <hr>
                                     <div class="list-group">
-                                        <button for="file-input" class="btn btn-sm btn-outline-secondary edit-button" title="Editar Avatar" data-bs-toggle="modal" data-bs-target="#editarAvatar" data-bs-toggle="tooltip">
+                                        <button for="file-input" class="btn btn-sm btn-outline-secondary edit-button" title="Editar Avatar" data-bs-toggle="modal" data-bs-target="#editAvatar" data-bs-toggle="tooltip">
                                             <i class="fa-solid fa-circle-user"></i>
                                         </button>
 
@@ -40,9 +40,6 @@
                         <hr>
                         <!--Lista de acciones-->
                         <div class="list-group">
-                            <button type="button" class="list-group-item list-group-item-action" onclick="WindowsProfile('ver_perfil')" id="ver_perfil_btn">
-                                <i class="fa-solid fa-eye"></i> Perfil
-                            </button> 
                             <button type="button" class="list-group-item list-group-item-action" onclick="WindowsProfile('editar_perfil')" id="editar_perfil_btn">
                                 <i class="fa-solid fa-user-pen"></i> Actualizar Perfil
                             </button>                          
@@ -59,7 +56,7 @@
 
             <div class="col-md-8 text-center">
                 @include('errors')
-                <div class="card" id="editar_perfil" hidden>
+                <div class="card" id="editar_perfil">
                     <form class="col-md-12" action="{{ route('profile.update',Auth()->user()->id) }}" method="POST">
                         @csrf
                         @method('PUT')
@@ -393,6 +390,7 @@
             </div>
         </div>
     </div>
+    @include('profile.avatar')
 @endsection
 
 @push('js')

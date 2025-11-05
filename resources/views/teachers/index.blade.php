@@ -111,10 +111,10 @@
                                     </td>
                                     <td class="text-center">
                                         <!--Show-->
-                                        <button type="button" class="btn btn-link btn-sm" data-bs-toggle="modal" data-bs-target="#showTeacher" data-id="{{$teacher->id}}" data-bs-toggle="tooltip" title="Ver noticia">
+                                        <a href="{{route('teachers.show', $teacher->teacher->id)}}" type="button" class="btn btn-link btn-sm" title="Ver docente">
                                             <i class="fas fa-eye text-secondary"></i>
-                                        </button>
-                                        <form style="display: inline-block;" action="{{route('teachers.destroy', $teacher->id)}}" method="post">
+                                        </a>
+                                        <form style="display: inline-block;" action="{{route('teachers.destroy', $teacher->teacher->id)}}" method="post">
                                             <input type="hidden" name="_method" value="delete">
                                             <input type="hidden" name="_token" value="{{csrf_token()}}">
                                             <button type="submit" class="btn btn-link btn-sm" onclick="return confirm('Estas seguro de eliminar este docente?');" title="Eliminar Docente">
@@ -134,10 +134,7 @@
             </div>
         </div>
     </div>
-        @include('teachers.show')
-
 @endsection
 
 @push('js')
-    <script type="text/javascript" src="build/assets/js/news/show.js"></script>
 @endpush

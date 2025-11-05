@@ -106,7 +106,7 @@ class TeacherController extends Controller
     public function show(Teacher $teacher)
     {
         //
-        return response()->json(array('teacher' => $teacher));
+        return view('teachers.show', compact('teacher'));
     } 
 
     public function update(Request $request, $user_id){

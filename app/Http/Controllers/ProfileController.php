@@ -107,11 +107,11 @@ class ProfileController extends Controller
     {
         //
         $request->validate([
-            'ruta_foto' => 'required|mimes:jpg,jpeg,png|max:10000'
+            'avatar_route' => 'required|mimes:jpg,jpeg,png|max:10000'
         ]);
 
         //Declaramos la ruta
-        $directory = 'users/'.Auth::user()->id.'/ruta_foto';
+        $directory = 'users/'.Auth::user()->id.'/avatar_route';
 
         //si no existe el directorio lo creamos
         if(!file_exists($directory)){
@@ -121,7 +121,7 @@ class ProfileController extends Controller
 
 
         //tipo de archivo
-        $extension = strtolower($request->ruta_foto->getClientOriginalExtension());
+        $extension = strtolower($request->avatar_route->getClientOriginalExtension());
 
         //nombre del archivo
         $nombre = 'avatar';
@@ -134,21 +134,21 @@ class ProfileController extends Controller
         $eliminar_existente = User::find(Auth::user()->id);
 
 
-        if (!empty($eliminar_existente->ruta_foto)){
+        if (!empty($eliminar_existente->avatar_route)){
 
-            if(Storage::exists($eliminar_existente->ruta_foto)){
-                Storage::delete($eliminar_existente->ruta_foto);
+            if(Storage::disk('public')->exists($eliminar_existente->avatar_route)){
+                Storage::disk('public')->delete($eliminar_existente->avatar_route);
             }
         }
 
-        Storage::put($ruta_archivo, \File::get($request->ruta_foto));
+        Storage::disk('public')->put($ruta_archivo, \File::get($request->avatar_route));
 
-        $existe = Storage::exists($ruta_archivo);
+        $existe = Storage::disk('public')->exists($ruta_archivo);
 
         if($existe){
             User::where('id',Auth::user()->id)
             ->update([
-                'ruta_foto' => $ruta_archivo
+                'avatar_route' => $ruta_archivo
             ]);
         }
 
