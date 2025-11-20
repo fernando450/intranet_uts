@@ -22,7 +22,7 @@
 						>
 						</div>
 						@error('avatar_route')
-						<div class="invalid-feedback d-block">{{ $message }}</div>
+							<div class="invalid-feedback d-block">{{ $message }}</div>
 						@enderror
 					</div>
 				</div>

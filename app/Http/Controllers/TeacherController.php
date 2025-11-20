@@ -14,20 +14,21 @@ use Illuminate\Support\Facades\Auth;
 class TeacherController extends Controller
 {
     //
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         //Consultar los usuarios con rol Docente
         $teachers = User::Search($request->get('data'))
             ->State($request->get('state'))
             ->Role('Docente')
             ->paginate(10);
 
-        $states = ['Activo','Inactivo'];
+        $states = ['Activo', 'Inactivo'];
 
-        return view('teachers.index', compact('teachers' , 'states'))
+        return view('teachers.index', compact('teachers', 'states'))
             ->with('i', ($request->input('page', 1) - 1) * 10);
     }
 
-   public function store(Request $request)
+    public function store(Request $request)
     {
         try {
             $response = DB::transaction(function () use ($request) {
@@ -106,10 +107,21 @@ class TeacherController extends Controller
     public function show(Teacher $teacher)
     {
         //
-        return view('teachers.show', compact('teacher'));
-    } 
+        $linking_types = [
+            1 => 'Exclusivo',
+            2 => 'Tiempo completo',
+            3 => 'Medio tiempo',
+            4 => 'Catedrático'
+        ];
 
-    public function update(Request $request, $user_id){
+        //selecconar el tipo de enlace
+        $teacher->linking_type_text = $linking_types[$teacher->linking_type];
+        $teacher->assigned_subjects = explode(',', $teacher->assigned_subjects);
+        return view('teachers.show', compact('teacher',));
+    }
+
+    public function update(Request $request, $user_id)
+    {
         //
         $validated = $request->validate([
             'professional_title' => 'required|string|max:255',
@@ -118,7 +130,7 @@ class TeacherController extends Controller
 
         $teacher = Teacher::where('user_id', $user_id)->first();
         //Verificamos si el docente existe
-        if(!isset($teacher)){
+        if (!isset($teacher)) {
             //Crear el docente
             $teacher = new Teacher();
             $teacher->user_id = $user_id;
@@ -132,20 +144,20 @@ class TeacherController extends Controller
 
     public function destroy(Teacher $teacher)
     {
-        $response = DB::transation(function() use ($teacher){    
+        $response = DB::transation(function () use ($teacher) {
             //Inactivar el docente
             $teacher->state = false;
             //Inactivar el usuario asociado
             $user = User::find($teacher->id_user);
             $user->state = 'Inactivo';
-            
-            if(!$teacher->save()){
-               return ['danger', 'Contactar con los administradores.'];
+
+            if (!$teacher->save()) {
+                return ['danger', 'Contactar con los administradores.'];
             }
 
-            if(!$user->save()){
+            if (!$user->save()) {
                 DB::rollBack();
-               return ['danger', 'Contactar con los administradores.'];
+                return ['danger', 'Contactar con los administradores.'];
             }
 
             return ['success', 'Docente Eliminado.'];
@@ -154,7 +166,8 @@ class TeacherController extends Controller
         return redirect()->route('teachers.index')->with($response[0], $response[1]);
     }
 
-    public function addTitle(Request $request){
+    public function addTitle(Request $request)
+    {
         $teacher = Teacher::find($request->teacher_id);
 
         $title = new Additional_titles();
@@ -163,31 +176,30 @@ class TeacherController extends Controller
         $title->institution = $request->institution;
         $title->graduation_year = $request->graduation_year;
 
-        if($title->save()){
+        if ($title->save()) {
             return response()->json(array('type' => 'success', 'message' => 'Título agregado.'));
-        }else{
+        } else {
             return response()->json(array('type' => 'danger', 'message' => 'Error al agregar el título.'));
         }
     }
 
     /*Actualizar informaicon academica*/
-    public function updateAcademicInformation(Request $request){
+    public function updateAcademicInformation(Request $request)
+    {
         dd($request);
         $teacher = Teacher::find($request->teacher_id);
 
         //Validamos que el docente exista
-        if(!isset($teacher)){
+        if (!isset($teacher)) {
             return response()->json(array('type' => 'danger', 'message' => 'Error al actualizar la información.'));
         }
 
         $$teacher->research_lines = (isset($request->research_lines)) ? json_encode($request->research_lines) : '';
 
-        if($teacher->save()){
+        if ($teacher->save()) {
             return response()->json(array('type' => 'success', 'message' => 'Información actualizada.'));
-        }else{
+        } else {
             return response()->json(array('type' => 'danger', 'message' => 'Error al actualizar la información.'));
         }
     }
-    
-
 }

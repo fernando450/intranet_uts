@@ -38,7 +38,6 @@ class ProfileController extends Controller
         }
 
         return view('profile.show', compact('teacher', 'titles', 'asignaturas', 'lines'));
-
     }
 
     /**
@@ -51,8 +50,8 @@ class ProfileController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'contact_number' => 'required|string|min:10|max:10|unique:users,contact_number,'.Auth::user()->id.',id',
-            'email' => 'required|string|lowercase|email|max:255|unique:users,email,'.Auth::user()->id.',id',
+            'contact_number' => 'required|string|min:10|max:10|unique:users,contact_number,' . Auth::user()->id . ',id',
+            'email' => 'required|string|lowercase|email|max:255|unique:users,email,' . Auth::user()->id . ',id',
             'second_email' => 'nullable|string|lowercase|email|max:255',
             'second_phone' => 'nullable|string|min:10|max:10'
         ]);
@@ -62,7 +61,7 @@ class ProfileController extends Controller
         $teacher = Teacher::where('user_id', auth()->user()->id)->first();
 
         //Verificamos si el docente ya existe
-        if(!isset($teacher)){
+        if (!isset($teacher)) {
             $teacher = new Teacher();
             $teacher->user_id = auth()->user()->id;
         }
@@ -70,7 +69,7 @@ class ProfileController extends Controller
         $teacher->second_email = $request->second_email;
         $teacher->second_phone = $request->second_phone;
 
-        if(!$teacher->save()){
+        if (!$teacher->save()) {
             return redirect()->back()->with('danger', 'Error al actualizar el perfil.');
         }
 
@@ -94,16 +93,15 @@ class ProfileController extends Controller
 
         if (Hash::check($request->old_password, $password_old)) {
             auth()->user()->update(['password' => Hash::make($request->get('password'))]);
-            
+
             return redirect()->back()->with('success', 'Contraseña actualizada exitosamente');
         } else {
             // La contraseña no es válida
             return redirect()->back()->with('warning', 'La contraseña anterior no conside');
         }
-
     }
 
-    public function imagen( Request $request)
+    public function imagen(Request $request)
     {
         //
         $request->validate([
@@ -111,10 +109,10 @@ class ProfileController extends Controller
         ]);
 
         //Declaramos la ruta
-        $directory = 'users/'.Auth::user()->id.'/avatar_route';
+        $directory = 'users/' . Auth::user()->id . '/avatar_route';
 
         //si no existe el directorio lo creamos
-        if(!file_exists($directory)){
+        if (!file_exists($directory)) {
             //Creamos directorio
             Storage::makeDirectory($directory);
         }
@@ -127,16 +125,14 @@ class ProfileController extends Controller
         $nombre = 'avatar';
 
         //declaramos la ruta del archivo
-        $ruta_archivo= $directory.'/'.$nombre.'.'.$extension;
-
+        $ruta_archivo = $directory . '/' . $nombre . '.' . $extension;
 
         //indicamos que queremos guardar y eliminar el que existe en el directorio
         $eliminar_existente = User::find(Auth::user()->id);
 
 
-        if (!empty($eliminar_existente->avatar_route)){
-
-            if(Storage::disk('public')->exists($eliminar_existente->avatar_route)){
+        if (!empty($eliminar_existente->avatar_route)) {
+            if (Storage::disk('public')->exists($eliminar_existente->avatar_route)) {
                 Storage::disk('public')->delete($eliminar_existente->avatar_route);
             }
         }
@@ -145,11 +141,11 @@ class ProfileController extends Controller
 
         $existe = Storage::disk('public')->exists($ruta_archivo);
 
-        if($existe){
-            User::where('id',Auth::user()->id)
-            ->update([
-                'avatar_route' => $ruta_archivo
-            ]);
+        if ($existe) {
+            User::where('id', Auth::user()->id)
+                ->update([
+                    'avatar_route' => $ruta_archivo
+                ]);
         }
 
         return back()->with('notification', ['type' => 'success', 'message' => 'Avatar actualizado exitosamente']);
