@@ -7,6 +7,7 @@ use App\Http\Controllers\roleController;
 use App\Http\Controllers\permissionController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\DocumentController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,7 +28,8 @@ Route::middleware('auth')->group(function () {
         'roles' => roleController::class,
         'permissions'=> permissionController::class,
         'news' => NewsController::class,
-        'teachers' => TeacherController::class
+        'teachers' => TeacherController::class,
+        'documents' => DocumentController::class
     ]);
         
 });

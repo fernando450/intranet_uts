@@ -22,6 +22,10 @@
     <a href="{{ route('news.index') }}" class="menu-item">
       <i class="fa-solid fa-newspaper"></i> Noticias
     </a>
+    <!--Documents-->
+    <a href="{{ route('documents.index') }}" class="menu-item">
+      <i class="fa-solid fa-file-lines"></i> Documentos
+    </a>
 
     <a href="#" class="menu-item">
       <i class="fa-solid fa-box-archive"></i> Detalles
